@@ -1,8 +1,8 @@
 // // index.js
-import express, { application } from "express";
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-dotenv.config();
+// import express, { application } from "express";
+// import fetch from "node-fetch";
+// import dotenv from "dotenv";
+// dotenv.config();
 
 // what's happening here?
 // creating an http server with express
@@ -10,8 +10,10 @@ dotenv.config();
 // dotenv loads my env file
 // dotenv.config this will read my env file
 
-const app = express();
-const port = 3000;
+// const app = express();
+// const port = 3000;
+
+import fetch from "node-fetch";
 
 async function getAccessToken() {
   const refresh_token = process.env.SPOTIFY_REFRESH_TOKEN;
@@ -88,8 +90,8 @@ app.get("/currently-playing", async (req, res) => {
 
 //this sends the currently playing object as a json otherwise we send 500 error
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
 
 //this will start the server
