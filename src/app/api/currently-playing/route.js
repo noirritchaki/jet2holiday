@@ -1,8 +1,8 @@
 // // index.js
-import express, { application } from "express";
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-dotenv.config();
+// import express, { application } from "express";
+// import fetch from "node-fetch";
+// import dotenv from "dotenv";
+// dotenv.config();
 
 // what's happening here?
 // creating an http server with express
@@ -10,8 +10,11 @@ dotenv.config();
 // dotenv loads my env file
 // dotenv.config this will read my env file
 
-const app = express();
-const port = 3000;
+// const app = express();
+// const port = 3000;
+
+import { NextResponse } from "next/server";
+import fetch from "node-fetch";
 
 async function getAccessToken() {
   const refresh_token = process.env.SPOTIFY_REFRESH_TOKEN;
@@ -43,10 +46,9 @@ async function getAccessToken() {
   const data = await response.json();
   return data.access_token;
 }
-
-app.get("/currently-playing", async (req, res) => {
+export async function GET() {
   try {
-    const accessToken = await getAccessToken(); //whenever someone calls the /currently-playing url this will run
+    const accessToken = await getAccessToken();
 
     const nowPlayingRes = await fetch(
       "https://api.spotify.com/v1/me/player/currently-playing",
@@ -54,21 +56,16 @@ app.get("/currently-playing", async (req, res) => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        cache: "no-store", // ensures fresh data
       }
     );
 
-    //this then calls the currently playing from spotify with the access token
-
     if (nowPlayingRes.status === 204 || nowPlayingRes.status > 400) {
-      return res.json({ isPlaying: false });
+      return NextResponse.json({ isPlaying: false });
     }
-
-    //this will return nothing is playing if no music is playing
 
     const song = await nowPlayingRes.json();
     const item = song.item;
-
-    //this will parse the spotify json response
 
     const currentlyPlaying = {
       isPlaying: song.is_playing,
@@ -79,17 +76,20 @@ app.get("/currently-playing", async (req, res) => {
       songUrl: item.external_urls.spotify,
     };
 
-    res.json(currentlyPlaying);
+    return NextResponse.json(currentlyPlaying, { status: 200 });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Something went wrong" });
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
-});
+}
 
 //this sends the currently playing object as a json otherwise we send 500 error
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
 
 //this will start the server
