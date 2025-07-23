@@ -61,7 +61,14 @@ export async function GET() {
     );
 
     if (nowPlayingRes.status === 204 || nowPlayingRes.status > 400) {
-      return NextResponse.json({ isPlaying: false });
+      return new NextResponse(JSON.stringify({ isPlaying: false }), {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*", // 👈 allow frontend
+          "Access-Control-Allow-Methods": "GET", // 👈 specify methods
+          "Content-Type": "application/json",
+        },
+      });
     }
 
     const song = await nowPlayingRes.json();
@@ -76,7 +83,14 @@ export async function GET() {
       songUrl: item.external_urls.spotify,
     };
 
-    return NextResponse.json(currentlyPlaying, { status: 200 });
+    return new NextResponse(JSON.stringify(currentlyPlaying), {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // 👈 allow frontend
+        "Access-Control-Allow-Methods": "GET", // 👈 specify methods
+        "Content-Type": "application/json",
+      },
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json(
@@ -84,6 +98,18 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+// Handle preflight OPTIONS request
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }
 
 //this sends the currently playing object as a json otherwise we send 500 error
