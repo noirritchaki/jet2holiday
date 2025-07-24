@@ -59,7 +59,7 @@ export async function GET() {
         cache: "no-store", // ensures fresh data
       }
     );
-
+    console.log(JSON.stringify(nowPlayingRes, null, 2));
     if (nowPlayingRes.status === 204 || nowPlayingRes.status > 400) {
       return new NextResponse(JSON.stringify({ isPlaying: false }), {
         status: 200,
