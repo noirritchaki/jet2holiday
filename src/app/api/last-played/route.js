@@ -29,6 +29,8 @@ export async function GET() {
   try {
     const accessToken = await getAccessToken();
 
+    console.log(`---------------tgyvyfvtyvyv`, accessToken);
+
     const recentRes = await fetch(
       "https://api.spotify.com/v1/me/player/recently-played?limit=1",
       {
@@ -54,7 +56,7 @@ export async function GET() {
     const lastItem = recentData.items[0];
     const lastTrack = lastItem.track;
 
-    // ✅ use date-fns to get relative time
+    //using date-fns to get relative time
     const relativeTime = formatDistanceToNow(new Date(lastItem.played_at), {
       addSuffix: true, // e.g. "5 minutes ago"
     });
