@@ -71,6 +71,7 @@ export async function GET() {
       playlist: metadata.name,
       playlistImage: metadata.images?.[0]?.url,
       playlistUrl: metadata.external_urls.spotify,
+      previewUrl: track.preview_url,
     };
 
     return new NextResponse(JSON.stringify(randomSong), {
