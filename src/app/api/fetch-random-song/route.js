@@ -74,6 +74,8 @@ export async function GET() {
       previewUrl: track.preview_url,
     };
 
+    console.log("Preview URL:", track.preview_url);
+
     return new NextResponse(JSON.stringify(randomSong), {
       status: 200,
       headers: {
