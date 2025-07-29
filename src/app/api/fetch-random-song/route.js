@@ -2,7 +2,6 @@ import { getAccessToken } from "@/utils";
 import { NextResponse } from "next/server";
 import fetch from "node-fetch";
 
-// Add multiple playlist IDs here
 const playlistIds = [
   "72Eerd2B9wnZqG7stP1yFB",
   "7Hh16NYofoNIv06XKcoljJ",
@@ -15,11 +14,9 @@ export async function GET() {
   try {
     const accessToken = await getAccessToken();
 
-    // Step 1: Pick a random playlist
     const randomPlaylistId =
       playlistIds[Math.floor(Math.random() * playlistIds.length)];
 
-    // Step 2: Fetch playlist metadata to get total track count
     const metadataRes = await fetch(
       `https://api.spotify.com/v1/playlists/${randomPlaylistId}`,
       {
@@ -42,11 +39,8 @@ export async function GET() {
 
     const metadata = await metadataRes.json();
     const totalTracks = metadata.tracks.total;
-
-    // Step 3: Pick a random offset
     const randomOffset = Math.floor(Math.random() * totalTracks);
 
-    // Step 4: Fetch one track at that offset
     const trackRes = await fetch(
       `https://api.spotify.com/v1/playlists/${randomPlaylistId}/tracks?limit=1&offset=${randomOffset}`,
       {
@@ -74,7 +68,7 @@ export async function GET() {
       album: track.album.name,
       albumImage: track.album.images?.[0]?.url,
       songUrl: track.external_urls.spotify,
-      playlist: playlistName,
+      playlist: metadata.name,
     };
 
     return new NextResponse(JSON.stringify(randomSong), {
@@ -87,10 +81,14 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching random song:", error.message);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 }
-    );
+    return new NextResponse(JSON.stringify({ error: "Something went wrong" }), {
+      status: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
 
